@@ -1,21 +1,29 @@
-import React, { useState } from 'react'
-import {Button, Container, Paper, Stack, TextField, Typography} from '@mui/material'
+import React, { useEffect } from 'react'
+import {Button, Container, Paper, TextField, Typography} from '@mui/material'
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import {useFileHandler, useInputValidation, useStrongPassword} from '6pp';
+import { useInputValidation } from '6pp';
+import { useDispatch, useSelector } from "react-redux";
 import background from "../../assets/1.jpg";
 import { Navigate } from 'react-router-dom';
+import { adminLogin, getAdmin } from "../../redux/thunks/admin";
 
-const isAdmin = true;
 
 const AdminLogin = () => {
+  const { isAdmin } = useSelector((state) => state.auth);
 
-    const secretKey = useInputValidation("");
+  const dispatch = useDispatch();
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        console.log("submit");
-    };
+  const secretKey = useInputValidation("");
+
+  const submitHandler = (e) => {
+      e.preventDefault();
+      dispatch(adminLogin(secretKey.value));
+  };
+
+  useEffect(() => {
+    dispatch(getAdmin());
+  }, [dispatch]);
 
   if(isAdmin) return <Navigate to="/admin/dashboard" />
 
@@ -49,10 +57,9 @@ const AdminLogin = () => {
               required
               fullWidth
               name="password"
-              label="SecretKey"
+              label="Secret Key"
               type="password"
               id="password"
-              autoComplete="current-password"
               value={secretKey.value}
               onChange={secretKey.changeHandler}
               />
@@ -65,6 +72,6 @@ const AdminLogin = () => {
     </Container>
    </div>
   );
-}
+};
 
 export default AdminLogin;

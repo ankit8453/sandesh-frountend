@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
 import { Avatar, IconButton, ListItem, Stack, Typography, } from '@mui/material';  
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
+import { transformImage } from '../../lib/features';
 
 const UserItem = ({user,handler,handlerIsLoading, isAdded=false, styling = {},}) => {
 
-    const {name,_id,avatar} = user;
+    const {name, _id, avatar} = user;
 
   return (
     <ListItem>
@@ -15,13 +16,15 @@ const UserItem = ({user,handler,handlerIsLoading, isAdded=false, styling = {},})
            width={"100%"}
            {...styling}
            >
-            <Avatar />
+            <Avatar src={transformImage(avatar)} />
+
             <Typography 
               variant='body1'
               sx={{
                 flexGlow: 1,
                 display: "-webkit-box",
                 WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 width: "100%",
@@ -40,13 +43,13 @@ const UserItem = ({user,handler,handlerIsLoading, isAdded=false, styling = {},})
                onClick={() => handler(_id)} disabled={handlerIsLoading}>
 
                 {
-                  isAdded ? <RemoveIcon />: <AddIcon />
+                  isAdded ? <RemoveIcon /> : <AddIcon />
                 }
                 
             </IconButton>
         </Stack>
     </ListItem>
-  )
-}
+  );
+};
 
 export default memo(UserItem);

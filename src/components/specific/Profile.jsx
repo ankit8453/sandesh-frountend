@@ -6,24 +6,27 @@ import {
   CalendarMonth as CalendarIcon,
 } from '@mui/icons-material';
 import moment from "moment";
+import { transformImage } from "../../lib/features";
 
-const Profile = () => {
+const Profile = ({ user }) => {
   return (
     <Stack spacing={"2rem"} direction={"column"} alignItems={"center"}>
-      <Avatar sx={{
+      <Avatar 
+        src={transformImage(user?.avatar?.url)}
+        sx={{
         width: 200,
         height:200,
         objectFit: "contain",
         marginBottom: "1rem",
         border: "5px solid white",
       }} />
-      <Profilecard heading={"BioData"} text={"My name is Ankit Pawar"} />
-      <Profilecard heading={"Username"} text={"ankit84563"} Icon={<UserNameIcon />} />
-      <Profilecard heading={"Name"} text={"Ankit Pawar"} Icon={<FaceIcon />} />
-      <Profilecard heading={"Date"} text={moment('2024-03-01T18:30:00.000z').fromNow()} Icon={<CalendarIcon />} />
+      <Profilecard heading={"BioData"} text={user?.bio} />
+      <Profilecard heading={"Username"} text={user?.username} Icon={<UserNameIcon />} />
+      <Profilecard heading={"Name"} text={user?.name} Icon={<FaceIcon />} />
+      <Profilecard heading={"Date"} text={moment(user?.createdAt).fromNow()} Icon={<CalendarIcon />} />
     </Stack>
-  )
-}
+  );
+};
 
 const Profilecard = ({text, Icon, heading}) => (
   <Stack 
@@ -39,6 +42,6 @@ const Profilecard = ({text, Icon, heading}) => (
         <Typography color={"rgba(0,0,0,0.4)"} variant='caption'>{heading}</Typography>
       </Stack>
   </Stack>
-)
+);
 
-export default Profile
+export default Profile;

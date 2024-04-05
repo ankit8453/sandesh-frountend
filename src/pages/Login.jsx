@@ -7,10 +7,16 @@ import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
 import {useFileHandler, useInputValidation, useStrongPassword} from '6pp'
 import { usernameValidator } from '../utils/validators';
 import background from "../assets/1.jpg";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { server } from "../constants/config";
+import { userExists } from "../redux/reducers/auth";
 
 const Login = () => {
 
   const [isLogin,setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleLogin = () => setIsLogin((prev) => !prev);
   
@@ -20,7 +26,85 @@ const Login = () => {
   const username =  useInputValidation("", usernameValidator);
   const password =  useStrongPassword();
 
-  const avatar = useFileHandler("single",2);
+  const avatar = useFileHandler("single",10);
+
+  const dispatch = useDispatch();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const toastId = toast.loading("Logging In...");
+
+    setIsLoading(true);
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    const toastId = toast.loading("Signing Up...");
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/new`,
+        formData,
+        config
+      );
+
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   
   return (
    <div style={{ backgroundImage:`url(${background})`,
@@ -47,8 +131,10 @@ const Login = () => {
             <Typography component="h1" variant="h5">Login</Typography>
             <form style={{
               width: "100%",
-              marginTop: "1rem",}
-            }>
+              marginTop: "1rem",
+            }}
+            onSubmit={handleLogin}
+            >
               <TextField 
               required
               fullWidth
@@ -76,7 +162,8 @@ const Login = () => {
               <Button type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}>Sign In</Button>
+              sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}>Sign In</Button>
               <Grid container>
             
               <Grid item>
@@ -90,7 +177,14 @@ const Login = () => {
           ) : (
             <>
             <Typography component="h1" variant="h5" paddingBottom={1}>Sign Up</Typography>
-            <Stack position={"relative"} width={"9rem"} margin={"auto"}>
+            
+            <form style={{
+              width: "100%",
+              marginTop: "1rem",}
+            }
+            onSubmit={handleSignUp}
+            >
+              <Stack position={"relative"} width={"9rem"} margin={"auto"}>
                 <Avatar sx={{
                   width: "9rem",
                   height: "9rem",
@@ -119,17 +213,18 @@ const Login = () => {
               </Stack>
               {
                   avatar.error && (
-                    <Typography color="error" variant='caption'>
+                    <Typography 
+                      m={"1rem auto"}
+                      width={"fit-content"}
+                      display={"block"}
+                      color="error"
+                      variant="caption"
+                    >
                       {avatar.error}
                     </Typography>
-                  )
-                }
-            <form style={{
-              width: "100%",
-              marginTop: "1rem",}
-            }>
-              
-              <Grid container spacing={2}>
+                  )}
+
+              <Grid container spacing={2} paddingTop={"15px"}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
@@ -163,8 +258,8 @@ const Login = () => {
                   label="Bio"
                   name="Bio"
                   autoComplete="Bio"
-                  value={username.value}
-                  onChange={username.changeHandler}
+                  value={bio.value}
+                  onChange={bio.changeHandler}
                 />
                 
               </Grid>
@@ -173,7 +268,7 @@ const Login = () => {
                   required
                   fullWidth
                   id="username"
-                  label="User Name"
+                  label="Username"
                   name="username"
                   autoComplete="username"
                   value={username.value}
@@ -211,11 +306,12 @@ const Login = () => {
               <Button type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}>Sign In</Button>
+              sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}>Sign Up</Button>
               <Grid container>
             
               <Grid item>
-                <Button fullWidth variant='text' onClick={toggleLogin}>
+                <Button fullWidth variant='text' disabled={isLoading} onClick={toggleLogin}>
                   {"Already have an account? Sign in"}
                 </Button>
               </Grid>

@@ -1,6 +1,7 @@
-import {styled} from '@mui/material';
+import { Skeleton, keyframes, styled } from "@mui/material";
 import { Link as LinkComponent } from 'react-router-dom';
 import { greyColor } from '../../constants/color';
+
 export const VisuallyHiddenInput = styled("input")({
     border: 0,
     clip: "rect(0 0 0 0)",
@@ -36,6 +37,7 @@ export const SerchField = styled("input")`
   padding: 1rem 2rem;
   width: 20vmax;
   border: none;
+  outline: none;
   border-radius: 1.5rem;
   background-color: #f1f1f1;
   font-size: 1.1rem;
@@ -55,3 +57,12 @@ export const ApniButton = styled("button")`
   }
 `;
 
+export const bounceAnimation = keyframes`
+0% { transform: scale(1); }
+50% { transform: scale(1.5); }
+100% { transform: scale(1); }
+`;
+
+export const BouncingSkeleton = styled(Skeleton)(() => ({
+  animation: `${bounceAnimation} 1s infinite`,
+}));

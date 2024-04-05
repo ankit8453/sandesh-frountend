@@ -1,9 +1,11 @@
-import { Close, Dashboard as DashboardIcon, ExitToApp as ExitToAppIcon, Groups, ManageAccounts as ManageAccountsIcon, Menu as MenuIcon, Message } from '@mui/icons-material';
+import { Close, Dashboard as DashboardIcon, ExitToApp as ExitToAppIcon,  Groups as GroupsIcon, ManageAccounts as ManageAccountsIcon, Menu as MenuIcon, Message as MessageIcon, } from '@mui/icons-material';
 import { Drawer, Grid, IconButton, Stack, Typography, styled } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { Link as LinkComp, Navigate, useLocation } from 'react-router-dom';
 import { grey } from '../../constants/color';
+import { useDispatch, useSelector } from 'react-redux';
+import { adminLogout } from "../../redux/thunks/admin";
 
 const Link = styled(LinkComp)`
   text-decoration: none;
@@ -29,20 +31,21 @@ const adminTabs = [
     {
         name: "Chats",
         path: "/admin/chats-management",
-        icon: <Groups />,
+        icon: <GroupsIcon />,
     },
     {
         name: "Messages",
         path: "/admin/messages",
-        icon: <Message />,
+        icon: <MessageIcon />,
     },
 ];
 
 const Sidebar = ({w = "100%"}) => {
     const location = useLocation();
+    const dispatch = useDispatch();
 
     const logoutHandler = () => {
-        console.log("Logout");
+      dispatch(adminLogout());
     };
 
     return (
@@ -83,17 +86,18 @@ const Sidebar = ({w = "100%"}) => {
     );
 };
 
-const isAdmin = true;
+
 
 const AdminLayout = ({children}) => {
+  const { isAdmin } = useSelector((state) => state.auth);
 
-    const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-    const handleIt = () => setIsMobile(!isMobile);
+  const handleIt = () => setIsMobile(!isMobile);
 
-    const handleClose = () => setIsMobile(false);
+  const handleClose = () => setIsMobile(false);
 
-    if(!isAdmin) return <Navigate to="/admin" />;
+  if(!isAdmin) return <Navigate to="/admin" />;
 
   return (
     <Grid container minHeight={"100vh"}>

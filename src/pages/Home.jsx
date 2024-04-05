@@ -12,7 +12,7 @@ const Home = () => {
         Select person to chat with
       </Typography>
     </Stack>
-  )
-}
+  );
+};
 
 export default AppLayout()(Home);

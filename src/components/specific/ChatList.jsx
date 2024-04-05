@@ -26,7 +26,7 @@ const ChatList = ({
 
             const isOnline = members?.some((member) => onlineUsers.includes(_id));
 
-            return <ChatItem 
+            return (<ChatItem 
                      index={index}
                      newMessageALert={newMessageALert} 
                      isOnline={isOnline}
@@ -37,10 +37,10 @@ const ChatList = ({
                      groupChat={groupChat}
                      sameSender={chatId === _id}
                      handleDeleteChat={handleDeleteChat}
-                     />
+                     />);
         })}
     </Stack>
-  )
-}
+  );
+};
 
 export default ChatList;

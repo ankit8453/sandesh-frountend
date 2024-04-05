@@ -1,31 +1,49 @@
 import moment from "moment";
 
 const fileFormat = (url = "") => {
-    const fileEx = url.split(".").pop();
+  const fileExt = url.split(".").pop();
 
-    if(fileEx === "mp4" || fileEx === "webm" || fileEx === "ogg") return "video";
+  if ( fileExt === "mp4" || fileExt === "webm" || fileExt === "ogg")
+    return "video";
 
-    if(fileEx === "mp3" || fileEx === "wav") return "audio";
+  if ( fileExt === "mp3" || fileExt === "wav") return "audio";
+  
+  if ( fileExt === "png" || fileExt === "jpg" || fileExt === "jpeg" || fileExt === "gif"
+  ) return "image";
 
-    if(fileEx === "png" || fileEx === "jpg" || fileEx === "jpeg" || fileEx === "gif") return "image";
-
-    return "file";
-
+  return "file";
 };
-const transformImage = (url = "", width = 100) => url;
+
+// https://res.cloudinary.com/dj5q966nb/image/upload/dpr_auto/w_200/v1710344436/fafceddc-2845-4ae7-a25a-632f01922b4d.png
+
+// /dpr_auto/w_200
+const transformImage = (url = "", width = 100) => {
+  const newUrl = url.replace("upload/", `upload/dpr_auto/w_${width}/`);
+
+  return newUrl;
+};
 
 const getLast7Days = () => {
-    const currentDate = moment();
+  const currentDate = moment();
 
-    const last7Days = [];
+  const last7Days = [];
 
-    for(let i = 0 ; i < 7; i++){
-        const dayDate = currentDate.clone().subtract(i, "days");
-        const dayName = dayDate.format("dddd");
+  for (let i = 0; i < 7; i++) {
+    const dayDate = currentDate.clone().subtract(i, "days");
+    const dayName = dayDate.format("dddd");
 
-        last7Days.unshift(dayName);
-    }
-    return last7Days;
+    last7Days.unshift(dayName);
+  }
+
+  return last7Days;
 };
 
-export { fileFormat, transformImage, getLast7Days  };
+const getOrSaveFromStorage = ({ key, value, get }) => {
+  if (get)
+    return localStorage.getItem(key)
+      ? JSON.parse(localStorage.getItem(key))
+      : null;
+  else localStorage.setItem(key, JSON.stringify(value));
+};
+
+export { fileFormat, transformImage, getLast7Days, getOrSaveFromStorage };

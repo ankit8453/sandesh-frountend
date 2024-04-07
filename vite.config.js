@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Vite PWA Project',
-        short_name: 'Vite PWA Project',
-        theme_color: '#ffffff',
+        name: 'Sandesh App',
+        short_name: 'Sandesh App',
+        theme_color: 'linear-gradient(rgb(255 275 209), rgb(249 159 159))',
         icons: [
             {
                 src: 'pwa-64x64.png',
